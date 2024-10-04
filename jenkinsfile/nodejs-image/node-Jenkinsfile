@@ -21,7 +21,7 @@ pipeline {
         JIRA_TRANSTATUS = "${transtatus}"
 
         //For Release to UAT and PROD
-        GIT_URL = 'git@github.com:lephat08/jenkins-k8s.git'
+        GIT_URL = 'https://github.com/lephat08/jenkins-k8s.git'
         CRED_ID = 'DIVA-BITBUCKET-SSH-ACCESS'
 
     }
@@ -42,7 +42,7 @@ pipeline {
                         ])
                     ])
 
-                    git branch: "${APPENV}", credentialsId: "${CRED_ID}", url: "${GIT_URL}"
+                    git branch: "${APPENV}",url: "${GIT_URL}"
 
 
 
