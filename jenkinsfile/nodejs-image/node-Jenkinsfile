@@ -1,9 +1,9 @@
 pipeline {
 
-    agent any
-    // agent {
-    //     label 'changiapp-macos'
-    // }
+    //agent any
+    agent {
+        label 'podman-agent'
+    }
 
     environment {
         // Project specific variables
@@ -43,7 +43,19 @@ pipeline {
                     ])
 
                     git branch: "${APPENV}",url: "${GIT_URL}"
-
+                    //stash includes: '**/*', name: 'WSPC'
+                }
+            }
+        }
+        
+        stage('Build'){
+            // agent {
+            //     label 'podman-agent'
+            // }
+            steps{
+                script {
+                    //unstash 'WSPC'
+                    sh 'podman version'
                 }
             }
         }
