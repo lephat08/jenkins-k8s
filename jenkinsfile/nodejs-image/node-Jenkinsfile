@@ -1,7 +1,9 @@
 pipeline {
-    agent {
-        label 'changiapp-macos'
-    }
+
+    agent any
+    // agent {
+    //     label 'changiapp-macos'
+    // }
 
     environment {
         // Project specific variables
@@ -14,9 +16,13 @@ pipeline {
         ENV_BRANCH  = "${appenv}"
         REL_VERSION = "${rversion}"
 
-        GITHUB_TOKEN = credentials('dockerhub_id') 
-        GIT_URL = 'https://github.com/lephat08/jenkins-k8s.git' 
+        REDEPLOY_FROM_ERROR_FLAG = 'Deployment Failed'
+        REDEPLOY_ARTIFACT_FLAG = 'Redeploy'
+        JIRA_TRANSTATUS = "${transtatus}"
 
+        //For Release to UAT and PROD
+        GIT_URL = 'git@github.com:lephat08/jenkins-k8s.git'
+        CRED_ID = 'DIVA-BITBUCKET-SSH-ACCESS'
 
     }
 
@@ -49,8 +55,7 @@ pipeline {
                         ])
                     ])
 
-                    def gitCloneUrl = GIT_URL.replace('https://', "https://${GITHUB_TOKEN}@")
-                    sh "git clone --branch ${params.APPENV} ${gitCloneUrl}"
+                    git branch: "${APPENV}", credentialsId: "${CRED_ID}", url: "${GIT_URL}"
 
 
 
