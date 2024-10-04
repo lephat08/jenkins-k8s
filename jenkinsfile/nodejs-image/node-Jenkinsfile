@@ -35,7 +35,7 @@ pipeline {
                     properties([
                         parameters([
                             choice(
-                                choices: ['uat-3.13.1','sit','develop', 'uat'], 
+                                choices: ['main','dev'], 
                                 description: 'Application Branch', 
                                 name: 'APPENV'
                             )
