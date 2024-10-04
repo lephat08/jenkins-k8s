@@ -54,7 +54,7 @@ pipeline {
         success {
             script {
                 if ("${ENV_BRANCH}" == "${APPENV}") {
-                    currentBuild.description = "${currentBuild.description} Build ${BUILD_NUMBER}: Deployment succeeded in ${ENV_BRANCH}.\n"  
+                    currentBuild.description = "Build ${BUILD_NUMBER}: Deployment succeeded in ${ENV_BRANCH}.\n"  
                 }     
             }
         }
@@ -62,7 +62,7 @@ pipeline {
         failure {
             script {
                 if ("${ENV_BRANCH}" == "${APPENV}") {
-                    currentBuild.description = "${currentBuild.description} Build ${BUILD_NUMBER}: Deployment failed in ${ENV_BRANCH}, Click on \"Build URL\" below to check the error.\n"
+                    currentBuild.description = "Build ${BUILD_NUMBER}: Deployment failed in ${ENV_BRANCH}, Click on \"Build URL\" below to check the error.\n"
                 }      
             }
         }
@@ -70,7 +70,7 @@ pipeline {
         unstable {
             script {
                 if ("${ENV_BRANCH}" == "${APPENV}") {
-                    currentBuild.description = "${currentBuild.description} [W] Security/Quality Gate Violations\nPlease Check SONARQUBE/NEXUS IQ/FORTIFY\n"
+                    currentBuild.description = "[W] Security/Quality Gate Violations\nPlease Check SONARQUBE/NEXUS IQ/FORTIFY\n"
                 }
             }
         }
