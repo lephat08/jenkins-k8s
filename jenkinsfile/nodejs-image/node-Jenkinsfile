@@ -71,6 +71,18 @@ pipeline {
                 }
             }
         }
+        
+        stage('Push Image'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    script {
+                        sh('podman login -u ${NEXUS_USER} -p ${NEXUS_PASS} ${REGISTRY_URL}')
+
+                        sh('podman image push docker.io/jamehunt08/jenkins-build-node:${BUILD_NUMBER}')
+                    }
+                }
+            }
+        }
 
     }
 
