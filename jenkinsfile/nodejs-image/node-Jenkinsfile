@@ -56,7 +56,7 @@ pipeline {
                 script {
                     //unstash 'WSPC'
                     sh 'podman version'
-                    dir('jenkins-k8s/nodejs-app'){
+                    dir('nodejs-app'){
                         sh '''
                             ls -alh
                             podman image build \
