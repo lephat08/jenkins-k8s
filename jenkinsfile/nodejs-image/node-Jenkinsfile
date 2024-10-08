@@ -61,11 +61,7 @@ pipeline {
                             ls -alh
                             podman image build \
                                 --cgroup-manager=cgroupfs \
-                                -t jamehunt08/jenkins-build-node:${BUILD_NUMBER} . --no-cache
-
-                            podman image list
-
-                            podman image tag localhost/jamehunt08/jenkins-build-node:${BUILD_NUMBER} jamehunt08/jenkins-build-node:${BUILD_NUMBER}
+                                -t docker.io/jamehunt08/jenkins-build-node:${BUILD_NUMBER} . --no-cache
 
                             podman image list
                         '''
