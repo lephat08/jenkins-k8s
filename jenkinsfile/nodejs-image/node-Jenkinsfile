@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         // Project specific variables
-        PROJID = 'changiapp-fe-android'
+        PROJID = 'local-project'
         DEV = 'DEV'
         SIT = 'SIT'
         UAT = 'UAT'
@@ -22,7 +22,7 @@ pipeline {
 
         //For Release to UAT and PROD
         GIT_URL = 'https://github.com/lephat08/jenkins-k8s.git'
-        CRED_ID = 'DIVA-BITBUCKET-SSH-ACCESS'
+        CRED_ID = 'GITHUB-SSH-KEY'
 
     }
 
@@ -56,6 +56,18 @@ pipeline {
                 script {
                     //unstash 'WSPC'
                     sh 'podman version'
+                    dir('jenkins-k8s/nodejs-app'){
+                        sh '''
+                            ls -alh
+                            podman image build \
+                                --cgroup-manager=cgroupfs \
+                                -t jamehunt08/jenkins-build-node:${BUILD_NUMBER} . --no-cache
+
+                            podman image list
+                        '''
+                        
+                        
+                    }
                 }
             }
         }
