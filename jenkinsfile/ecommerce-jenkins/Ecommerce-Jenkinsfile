@@ -96,7 +96,7 @@ pipeline {
                                 '''                               
                         }
 
-                        sh('podman image push docker.io/jamehunt08/jenkins-build-node:version-${BUILD_NUMBER}')
+                        sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
                     }
                 }
             }
