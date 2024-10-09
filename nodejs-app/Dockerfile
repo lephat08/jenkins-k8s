@@ -1,17 +1,21 @@
-FROM jenkins/inbound-agent:alpine
-
+FROM jenkinsci/jnlp-slave
 
 USER root
-# Update package list
-RUN apk update
 
-# Install Node.js 22
-RUN apk add --no-cache nodejs=21.7.3-r0 npm=21.7.3-r0
+RUN apt-get update && \
+    apt-get install -y sudo git && \
+    echo "jenkins ALL=NOPASSWD: /usr/bin/docker" >> /etc/sudoers
 
-# Verify installation
-RUN node -v && npm -v
-
-VOLUME ["/home/jenkins/"]
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g typescript yarn && \
+    chown -R jenkins:jenkins /home/jenkins/.config && \
+    chown -R jenkins:jenkins /home/jenkins/.npm
 
 USER jenkins
 
+RUN mkdir -p /home/jenkins/script
+
+ENV PATH="/home/jenkins/script:$PATH"
+
+COPY script/docker.sh /home/jenkins/script/docker
