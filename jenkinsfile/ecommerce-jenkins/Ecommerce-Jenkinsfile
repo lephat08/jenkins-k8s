@@ -76,6 +76,9 @@ pipeline {
 
 
         stage('Build and Push Image'){
+            agent {
+                label 'podman-agent'
+            }
             steps{
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                     script {
