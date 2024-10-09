@@ -73,16 +73,16 @@ pipeline {
                 archiveArtifacts artifacts: 'build', allowEmptyArchive: true
             }
         }
-        
-        stage('Build Image and Push'){
-            agent {
-                label 'podman-agent'
-            }
+
+
+        stage('Build and Push Image'){
             steps{
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                        script {
-                            sh 'podman version'
-                            dir('nextjs-blog'){
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    script {
+                        sh('podman login -u ${NEXUS_USER} -p ${NEXUS_PASS} ${REGISTRY_URL}')
+
+                        sh 'podman version'
+                        dir('nextjs-blog'){
                                 sh '''
                                     ls -alh
                                     podman image build \
@@ -90,17 +90,15 @@ pipeline {
                                         -t docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER} . --no-cache
 
                                     podman image list
-                                '''
-                                
-                                
-                            }
-                            sh('podman login -u ${NEXUS_USER} -p ${NEXUS_PASS} ${REGISTRY_URL}')
-
-                            sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
+                                '''                               
                         }
+
+                        sh('podman image push docker.io/jamehunt08/jenkins-build-node:version-${BUILD_NUMBER}')
                     }
+                }
+            }
         }
-        
+               
     }
 
     post {
