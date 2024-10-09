@@ -1,19 +1,17 @@
-# Base image for Jenkins agent
-FROM jenkins/inbound-agent:latest
+FROM jenkins/inbound-agent:alpine
 
-# Set environment variables for Jenkins agent
-ENV JENKINS_AGENT_HOME /home/jenkins
-
-# Install Node.js, npm, and Podman
+# Install dependencies
 USER root
+RUN apk add --no-cache curl
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs zip git && \
-    apt-get install -y software-properties-common \
-    apt-get clean
+# Install Node.js 22 from NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apk add --no-cache nodejs
+
+# Verify installation
+RUN node -v && npm -v
 
 VOLUME ["/home/jenkins/"]
-# Change back to Jenkins user
+
 USER jenkins
+
