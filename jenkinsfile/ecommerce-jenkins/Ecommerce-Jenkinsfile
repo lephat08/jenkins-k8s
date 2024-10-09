@@ -2,7 +2,7 @@ pipeline {
 
     //agent any
     agent {
-        label 'podman-agent'
+        label 'node-22'
     }
 
     environment {
@@ -47,11 +47,37 @@ pipeline {
                 }
             }
         }
+
+
+        stage('Build source') {
+
+            steps {
+                script {
+
+                    dir('nextjs-blog'){
+                        echo 'Install dependencies'
+                        sh 'npm install --loglevel verbose --no-audit'
+
+                        if ("${ENV_BRANCH}" == "${APPENV}") {
+                            sh 'npm run build'
+
+                        } else {
+                            sh 'npm run build'                    
+                        }
+                        sh 'ls -alht'
+                        // sh 'mv ./build/index.html ./build/en.html'
+
+
+                    }
+                }
+                archiveArtifacts artifacts: 'build', allowEmptyArchive: true
+            }
+        }
         
-        stage('Build'){
-            // agent {
-            //     label 'podman-agent'
-            // }
+        stage('Build Image'){
+            agent {
+                label 'podman-agent'
+            }
             steps{
                 script {
                     //unstash 'WSPC'
