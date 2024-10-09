@@ -1,21 +1,13 @@
-FROM jenkinsci/jnlp-slave
+FROM jenkins/agent:alpine
 
-USER root
+# Install nodejs 20 and other dependencies
+RUN apk update && \
+    apk add --no-cache nodejs npm curl
 
-RUN apt-get update && \
-    apt-get install -y sudo git && \
-    echo "jenkins ALL=NOPASSWD: /usr/bin/docker" >> /etc/sudoers
+# Verify installation
+RUN node --version && npm --version
 
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g typescript yarn && \
-    chown -R jenkins:jenkins /home/jenkins/.config && \
-    chown -R jenkins:jenkins /home/jenkins/.npm
+VOLUME ["/home/jenkins/"]
 
 USER jenkins
 
-RUN mkdir -p /home/jenkins/script
-
-ENV PATH="/home/jenkins/script:$PATH"
-
-COPY script/docker.sh /home/jenkins/script/docker
