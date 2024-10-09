@@ -74,42 +74,35 @@ pipeline {
             }
         }
         
-        stage('Build Image'){
+        stage('Build Image and Push'){
             agent {
                 label 'podman-agent'
             }
             steps{
                 script {
-                    //unstash 'WSPC'
-                    sh 'podman version'
-                    dir('nextjs-blog'){
-                        sh '''
-                            ls -alh
-                            podman image build \
-                                --cgroup-manager=cgroupfs \
-                                -t docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER} . --no-cache
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        script {
+                            sh 'podman version'
+                            dir('nextjs-blog'){
+                                sh '''
+                                    ls -alh
+                                    podman image build \
+                                        --cgroup-manager=cgroupfs \
+                                        -t docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER} . --no-cache
 
-                            podman image list
-                        '''
-                        
-                        
+                                    podman image list
+                                '''
+                                
+                                
+                            }
+                            sh('podman login -u ${NEXUS_USER} -p ${NEXUS_PASS} ${REGISTRY_URL}')
+
+                            sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
+                        }
                     }
-                }
             }
         }
         
-        stage('Push Image'){
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'dockerhub_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    script {
-                        sh('podman login -u ${NEXUS_USER} -p ${NEXUS_PASS} ${REGISTRY_URL}')
-
-                        sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
-                    }
-                }
-            }
-        }
-
     }
 
     post {
