@@ -1,5 +1,7 @@
 FROM jenkins/inbound-agent:alpine
 
+
+USER root
 # Update package list
 RUN apk update
 
