@@ -1,14 +1,10 @@
 FROM jenkins/inbound-agent:alpine
 
-# Install dependencies
-USER root
-RUN apk add --no-cache curl tar gzip
+# Update package list
+RUN apk update
 
-# Set the Node.js version
-ENV NODE_VERSION=22.0.0
-
-# Download and install Node.js
-RUN curl -fsSL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz | tar -xz -C /usr/local --strip-components=1
+# Install Node.js 22
+RUN apk add --no-cache nodejs=22.0.0-r0 npm=22.0.0-r0
 
 # Verify installation
 RUN node -v && npm -v
