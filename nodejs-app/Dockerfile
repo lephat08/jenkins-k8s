@@ -1,15 +1,19 @@
-# Use Node.js as the base image
-FROM node:22
+# Base image for Jenkins agent
+FROM jenkins/inbound-agent:latest
 
-# Set the working directory in the container
-WORKDIR /app
+# Set environment variables for Jenkins agent
+ENV JENKINS_AGENT_HOME /home/jenkins
 
-# Copy the necessary files
-COPY package.json package.json
-COPY app.js app.js
+# Install Node.js, npm, and Podman
+USER root
 
-# Install dependencies (none are needed for this simple task, but kept in case of future needs)
-RUN npm install
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs zip git && \
+    apt-get install -y software-properties-common \
+    apt-get clean
 
-# Run the Node.js script
-CMD ["node", "app.js"]
+VOLUME ["/home/jenkins/"]
+# Change back to Jenkins user
+USER jenkins
