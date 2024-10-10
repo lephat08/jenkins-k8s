@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextapp
+  namespace: next-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextapp
+  template:
+    metadata:
+      labels:
+        app: nextapp
+    spec:
+      containers:
+        - name: nextapp
+          image: jamehunt08/nextjs-blog:version-replaceImageTag
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+          ports:
+            - name: httpport
+              containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextapp-service
+  namespace: next-app
+spec:
+  selector:
+    app: nextapp  # Matches the app label in the Deployment
+  ports:
+    - protocol: TCP
+      port: 3000            
+      targetPort: 3000       
+      #nodePort: 30085      
+  type: NodePort #ClusterIP   
