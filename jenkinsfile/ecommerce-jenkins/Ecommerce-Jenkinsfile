@@ -101,6 +101,37 @@ pipeline {
                 }
             }
         }
+
+        stage('Updating the Deployment File'){
+            // agent {
+            //     label 'podman-agent'
+            // }
+            environment {
+                GIT_REPO_NAME = "jenkins-k8s"
+                GIT_USER_NAME = "lephat08"
+            }
+            steps{
+                withCredentials([string(credentialsId: 'GITHUB-SSH-KEY', variable: 'GITHUB-SSH-KEY')]) {
+                    script {
+                        //dir('nextjs-blog'){
+                            sh '''
+                            
+                                git pull https://github.com/lephat08/jenkins-k8s.git
+                                git config  user.email "lehuuphat08@gmail.com"
+                                git config  user.name "jenkins-k8s"
+                                BUILD_NUMBER=${BUILD_NUMBER}
+                                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" nextapp-deployment/deployment.yml
+                                git add nextapp-deployment/deployment.yml
+                                git commit -m "updated the image ${BUILD_NUMBER}"
+                                git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB-SSH-KEY}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                                
+                            
+                            '''                              
+                        //}
+                    }
+                }
+            }
+        }
                
     }
 
