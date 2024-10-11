@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: nextapp
-          image: jamehunt08/nextjs-blog:version-replaceImageTag
+          image: jamehunt08/nextjs-blog:version-${BUILD_NUMBER}
           resources:
             limits:
               memory: "1Gi"
