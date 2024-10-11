@@ -122,9 +122,10 @@ pipeline {
                                 sed -i "s/version-[0-9]*/version-${BUILD_NUMBER}/g" nextapp-deployment/deployment.yaml
                                 git add nextapp-deployment/deployment.yaml
                                 git commit -m "updated the image ${BUILD_NUMBER}"
-                                git push git@github.com:${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                                #git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB-SSH-KEY}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                                 
-                            
+                                git push https://${GIT_USER_NAME}:${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+
                             '''                              
                         //}
                     }
