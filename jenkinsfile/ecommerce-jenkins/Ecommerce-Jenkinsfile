@@ -23,7 +23,7 @@ pipeline {
         //For Release to UAT and PROD
         GIT_URL = 'https://github.com/lephat08/jenkins-k8s.git'
         CRED_ID = 'GITHUB-SSH-KEY'
-
+        GIT_TOKEN = credentials('github_token')
     }
 
     stages {
@@ -96,7 +96,7 @@ pipeline {
                                 '''                               
                         }
 
-                        //sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
+                        sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
                     }
                 }
             }
@@ -111,20 +111,22 @@ pipeline {
                 GIT_USER_NAME = "lephat08"
             }
             steps{
-                withCredentials([sshUserPrivateKey(credentialsId: 'GITHUB-SSH-KEY', keyFileVariable: 'GITHUB-SSH-KEY')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: "${CRED_ID}", keyFileVariable: 'SSH_KEY')]) {
                     script {
                         //dir('nextjs-blog'){
                             sh '''
                                 ls -alht
                                 git config  user.email "lehuuphat08@gmail.com"
                                 git config  user.name "jenkins-k8s"
+                                git remote set-url origin https://${GIT_USER_NAME}:${GIT_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git
+
                                 BUILD_NUMBER=${BUILD_NUMBER}
-                                sed -i "s/version-[0-9]*/version-${BUILD_NUMBER}/g" nextapp-deployment/deployment.yaml
+                                sed -i "s/version-24/version-${BUILD_NUMBER}/g" nextapp-deployment/deployment.yaml
                                 git add nextapp-deployment/deployment.yaml
                                 git commit -m "updated the image ${BUILD_NUMBER}"
                                 #git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB-SSH-KEY}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                                
-                                git push https://${GIT_USER_NAME}:${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+
+                                git push origin main
 
                             '''                              
                         //}
