@@ -119,10 +119,10 @@ pipeline {
                                 git config  user.email "lehuuphat08@gmail.com"
                                 git config  user.name "jenkins-k8s"
                                 BUILD_NUMBER=${BUILD_NUMBER}
-                                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" nextapp-deployment/deployment.yaml
+                                sed -i "s/version-[0-9]*/version-${BUILD_NUMBER}/g" nextapp-deployment/deployment.yaml
                                 git add nextapp-deployment/deployment.yaml
                                 git commit -m "updated the image ${BUILD_NUMBER}"
-                                git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB-SSH-KEY}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                                git push git@github.com:${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                                 
                             
                             '''                              
