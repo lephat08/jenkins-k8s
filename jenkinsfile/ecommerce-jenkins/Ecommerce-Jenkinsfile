@@ -90,13 +90,13 @@ pipeline {
                                     ls -alh
                                     podman image build \
                                         --cgroup-manager=cgroupfs \
-                                        -t docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER} . --no-cache
+                                        -t docker.io/jamehunt08/nextjs-blog:${BUILD_NUMBER} . --no-cache
 
                                     podman image list
                                 '''                               
                         }
 
-                        sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
+                        //sh('podman image push docker.io/jamehunt08/nextjs-blog:version-${BUILD_NUMBER}')
                     }
                 }
             }
@@ -110,28 +110,31 @@ pipeline {
                 GIT_REPO_NAME = "jenkins-k8s"
                 GIT_USER_NAME = "lephat08"
                 IMAGE_NAME = "jamehunt08/nextjs-blog"
-                BUILD_TAG = "version-${BUILD_NUMBER}"
+                BUILD_TAG = "${BUILD_NUMBER}"
             }
             steps{
                 withCredentials([sshUserPrivateKey(credentialsId: "${CRED_ID}", keyFileVariable: 'SSH_KEY')]) {
                     script {
-                        //dir('nextjs-blog'){
-                            sh '''
-                                ls -alht
-                                git config  user.email "lehuuphat08@gmail.com"
-                                git config  user.name "jenkins-k8s"
-                                git remote set-url origin https://${GIT_USER_NAME}:${GIT_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git
+                        def previousBuild = currentBuild.previousBuild ?: currentBuild
+                        def PREVIOUS_BUILD_TAG = "${previousBuild.number}"
+                        
+                        echo "Previous Build Number: ${previousBuild.number}"
+                        echo "Previous Build Tag: ${PREVIOUS_BUILD_TAG}"
+                        echo "Current Build Tag: ${BUILD_TAG}"
+                        
+                        sh '''
+                            
+                            git config user.email "lehuuphat08@gmail.com"
+                            git config user.name "jenkins-k8s"
+                            git remote set-url origin https://${GIT_USER_NAME}:${GIT_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git
 
-                                BUILD_NUMBER=${BUILD_NUMBER}
-                                sed -i '/${IMAGE_NAME}:version-${BUILD_NUMBER}/d; /${IMAGE_NAME}/a ${IMAGE_NAME}:${BUILD_TAG}' nextapp-deployment/deployment.yaml
-                                git add nextapp-deployment/deployment.yaml
-                                git commit -m "updated the image ${BUILD_NUMBER}"
-                                #git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB-SSH-KEY}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-
-                                git push origin main
-
-                            '''                              
-                        //}
+                            sed -i "s+jamehunt08/nextjs-blog.*+jamehunt08/nextjs-blog:${BUILD_NUMBER}+g" nextapp-deployment/deployment.yaml
+                            
+                            cat nextapp-deployment/deployment.yaml
+                            git add nextapp-deployment/deployment.yaml
+                            git commit -m "Update image tag to ${IMAGE_NAME}:${BUILD_TAG}" || echo "No changes to commit"
+                            git push origin main || echo "Failed to push changes to GitHub"
+                        '''
                     }
                 }
             }
