@@ -1,16 +1,18 @@
 {
+  "name": "sample-dashboard",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
     "dev": "next dev",
-    "start": "next start"
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "next": "latest",
+    "@appwrite.io/pink": "^0.0.5",
+    "@next/font": "13.1.6",
+    "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0"
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
