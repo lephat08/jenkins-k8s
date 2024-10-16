@@ -11,7 +11,7 @@ export default function Home() {
         <title>Contract Dashboard</title>
       </Head>
       <div class="box u-margin-32 u-padding-block-12">
-        <h1 class="heading-level-1 u-text-center">Contract Dashboard</h1>
+        <h1 class="heading-level-1 u-text-center">Testing Contract Dashboard</h1>
         <ContractStatus />
         <CycleTime/>
         <ContractTable/>
