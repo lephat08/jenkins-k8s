@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nextapp
+  namespace: {{ .Values.namespace }}  #helm-app
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: nextapp
+  template:
+    metadata:
+      labels: 
+        app: nextapp
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"                           #jamehunt08/nextjs-blog:70
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+          ports:
+            - name: httpport
+              containerPort: 3000
