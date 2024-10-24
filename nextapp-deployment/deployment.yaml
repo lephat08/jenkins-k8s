@@ -4,7 +4,7 @@ metadata:
   name: nextapp
   namespace: next-app
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: nextapp
